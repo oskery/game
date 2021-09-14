@@ -1,46 +1,52 @@
 import { useState, useEffect } from 'react'
 
-function actionByKey(key) {
-  const keys = {
-    ArrowUp: 'moveForward',
-    ArrowDown: 'moveBackward',
-    ArrowLeft: 'moveLeft',
-    ArrowRight: 'moveRight',
-    Space: 'jump'
+function moveByKey(key) {
+  switch (key) {
+    case 'ArrowUp':
+    case 'KeyW':
+      return 'forward'
+    case 'ArrowDown':
+    case 'KeyS':
+      return 'backward'
+    case 'ArrowLeft':
+    case 'KeyA':
+      return 'left'
+    case 'ArrowRight':
+    case 'KeyD':
+      return 'right'
+    case 'Space':
+      return 'jump'
+    default:
+      return
   }
-  return keys[key]
 }
 
 export const useController = () => {
   const [movement, setMovement] = useState({
-    moveForward: false,
-    moveBackward: false,
-    moveLeft: false,
-    moveRight: false,
+    forward: false,
+    backward: false,
+    left: false,
+    right: false,
     jump: false
   })
 
-  const handleKeyDown = (e) => {
-    let code = actionByKey(e.code)
-    if (code) {
-      setMovement((state) => ({
-        ...state,
-        [code]: true
-      }))
-    }
-  }
-
-  const handleKeyUp = (e) => {
-    let code = actionByKey(e.code)
-    if (code) {
-      setMovement((state) => ({
-        ...state,
-        [code]: false
-      }))
-    }
-  }
-
   useEffect(() => {
+    const handleKeyDown = (e) => {
+      let code = moveByKey(e.code)
+      if (code)
+        setMovement((state) => ({
+          ...state,
+          [code]: true
+        }))
+    }
+    const handleKeyUp = (e) => {
+      let code = moveByKey(e.code)
+      if (code)
+        setMovement((state) => ({
+          ...state,
+          [code]: false
+        }))
+    }
     document.addEventListener('keydown', handleKeyDown)
     document.addEventListener('keyup', handleKeyUp)
     return () => {
@@ -48,6 +54,10 @@ export const useController = () => {
       document.removeEventListener('keyup', handleKeyUp)
     }
   }, [])
+
+  useEffect(() => {
+    movement.forward && console.log('går framåt')
+  }, [movement])
 
   return movement
 }
