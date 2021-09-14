@@ -34,16 +34,16 @@ export const useController = () => {
     const handleKeyDown = (e) => {
       let code = moveByKey(e.code)
       if (code)
-        setMovement((state) => ({
-          ...state,
+        setMovement((m) => ({
+          ...m,
           [code]: true
         }))
     }
     const handleKeyUp = (e) => {
       let code = moveByKey(e.code)
       if (code)
-        setMovement((state) => ({
-          ...state,
+        setMovement((m) => ({
+          ...m,
           [code]: false
         }))
     }

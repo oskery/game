@@ -3,9 +3,13 @@ import { useSphere } from '@react-three/cannon'
 import { useThree, useFrame } from '@react-three/fiber'
 import { useController } from '../hooks/useController'
 import { Vector3 } from 'three'
-import { PointerLockControls } from '@react-three/drei'
+import {
+  PointerLockControls,
+  PerspectiveCamera,
+  OrthographicCamera
+} from '@react-three/drei'
 
-const SPEED = 6
+const SPEED = 16
 
 export default function Player(props) {
   const { camera } = useThree()
@@ -13,38 +17,50 @@ export default function Player(props) {
   const [ref, api] = useSphere(() => ({
     mass: 1,
     type: 'Dynamic',
-    position: [0, 10, 0],
     ...props
   }))
   const velocity = useRef([0, 0, 0])
+  const lookAt = new Vector3()
 
   useEffect(() => {
     api.velocity.subscribe((v) => (velocity.current = v))
   }, [api.velocity])
 
   useFrame(() => {
-    ref.current.getWorldPosition(camera.position)
+    ref.current.getWorldPosition(lookAt)
+
     const direction = new Vector3()
 
-    const sideVector = new Vector3(Number(left) - Number(right), 0, 0)
-    const frontVector = new Vector3(0, 0, Number(backward) - Number(forward))
+    const sideVector = new Vector3(Number(right) - Number(left), 0, 0)
+    const frontVector = new Vector3(0, 0, Number(forward) - Number(backward))
 
     direction
       .subVectors(frontVector, sideVector)
       .normalize()
       .multiplyScalar(SPEED)
-      .applyEuler(camera.rotation)
+      .applyEuler(ref.current.rotation)
 
     api.velocity.set(direction.x, velocity.current[1], direction.z)
+    forward ? console.log(ref.current) : null
+    camera.lookAt(lookAt)
 
     if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
-      api.velocity.set(velocity.current[0], 10, velocity.current[2])
+      api.velocity.set(velocity.current[0], 20, velocity.current[2])
   })
 
   return (
     <>
       <PointerLockControls />
-      <mesh ref={ref} />
+      <PerspectiveCamera
+        makeDefault
+        fov={75}
+        rotation={[0.5, Math.PI, 0]}
+        position={[0, 15, -20]}
+      />
+      <mesh castShadow ref={ref}>
+        <meshStandardMaterial />
+        <sphereBufferGeometry attach="geometry" />
+      </mesh>
     </>
   )
 }

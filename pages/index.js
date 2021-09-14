@@ -12,7 +12,7 @@ export default function Game(props) {
       <Sky sunPosition={[100, 10, 100]} />
       <ambientLight intensity={0.3} />
       <pointLight castShadow intensity={2.8} position={[100, 100, 100]} />
-      <Physics gravity={[0, -30, 0]}>
+      <Physics gravity={[0, -106, 0]}>
         <Cube position={[0, 1, -10]} />
         <Ground />
         <Player />
