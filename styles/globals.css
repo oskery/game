@@ -12,7 +12,9 @@ body {
 html,
 body,
 #__next {
+  display: flex;
   height: 100%;
+  width: 100%;
 }
 
 .scoreboard {

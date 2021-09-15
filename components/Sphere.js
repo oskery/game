@@ -38,7 +38,7 @@ export default function Sphere(props) {
 
     api.velocity.set(direction.x, velocity.current[1], direction.z)
 
-    //camera.position.set(lookAt.x, 10, lookAt.z - 10)
+    camera.position.set(lookAt.x, 10, lookAt.z - 10)
 
     if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
       api.velocity.set(velocity.current[0], 20, velocity.current[2])

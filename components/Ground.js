@@ -1,5 +1,6 @@
 import { usePlane } from '@react-three/cannon'
 import { useNormalTexture } from '@react-three/drei'
+import { useEffect } from 'react'
 
 export default function Ground(props) {
   const [ref] = usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0], ...props }))
@@ -10,9 +11,11 @@ export default function Ground(props) {
     anisotropy: 8
   })
 
+  useEffect(() => {}, [])
+
   return (
     <mesh ref={ref} receiveShadow>
-      <planeBufferGeometry attach="geometry" args={[50, 50]} />
+      <planeBufferGeometry attach="geometry" args={[25, 25]} />
       <meshStandardMaterial
         attach="material"
         normalMap={normalMap}
