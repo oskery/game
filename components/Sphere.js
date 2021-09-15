@@ -5,7 +5,7 @@ import { useController } from '../hooks/useController'
 import { Vector3 } from 'three'
 import { useStore } from '../hooks/useStore'
 
-import { gql, useSubscription } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 
 const QUERY = gql`
   mutation MyQuery {

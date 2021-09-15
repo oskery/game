@@ -5,9 +5,10 @@ import { Ground, Sphere, Cube } from '../components/'
 import { useStore } from '../hooks/useStore'
 
 import { gql, useSubscription } from '@apollo/client'
+import { useEffect } from 'react'
 
-const QUERY = gql`
-  subscription MyQuery {
+const SUBSCRIPTION = gql`
+  subscription {
     user {
       uid
       pos
@@ -18,7 +19,7 @@ const QUERY = gql`
 export default function Game() {
   const jumps = useStore((state) => state.jumps)
 
-  const { data, loading, error } = useSubscription(QUERY)
+  const { data, loading, error } = useSubscription(SUBSCRIPTION)
 
   if (error) {
     console.log(error)
@@ -40,13 +41,14 @@ export default function Game() {
           rotation={[0.5, Math.PI, 0]}
           position={[0, 40, -50]}
         />
-        <Physics gravity={[0, -106, 0]}>
-          <Ground />
-          {!loading &&
-            data.user.map(({ uid, pos }) => (
-              <Sphere key={uid} position={pos} uid={uid} />
+        {!loading && (
+          <Physics gravity={[0, -106, 0]}>
+            <Ground />
+            {data.user.map(({ uid, pos }) => (
+              <Sphere key={pos} position={pos} uid={uid} />
             ))}
-        </Physics>
+          </Physics>
+        )}
       </Canvas>
     </>
   )

@@ -49,21 +49,23 @@ export async function getServerSideProps({ query: { uid } }) {
   })
 
   let res
-  try {
-    res = await client.mutate({
-      mutation: gql`
-        mutation MyMutation($uid: String!) {
-          insert_user(objects: { uid: $uid }) {
-            affected_rows
+  if (uid) {
+    try {
+      res = await client.mutate({
+        mutation: gql`
+          mutation MyMutation($uid: String!) {
+            insert_user(objects: { uid: $uid }) {
+              affected_rows
+            }
           }
+        `,
+        variables: {
+          uid
         }
-      `,
-      variables: {
-        uid
-      }
-    })
-  } catch (e) {
-    console.log(e)
+      })
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   return {
