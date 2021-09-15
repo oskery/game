@@ -1,20 +1,14 @@
-import create from "zustand";
+import create from 'zustand'
+import { persist } from 'zustand/middleware'
 
-const getLocalStorage = (key) => JSON.parse(window.localStorage.getItem(key));
-const setLocalStorage = (key, value) =>
-  window.localStorage.setItem(key, JSON.stringify(value));
-
-export const useStore = create((set) => ({
-  cubes: getLocalStorage("world") || [{ pos: [0, 0, 0], type: "wood" }],
-  addCube: (x, y, z, type) =>
-    set((state) => {
-      ({ cubes: [...state.cubes, { pos: [x, y, z], type }] });
+export const useStore = create(
+  persist(
+    (set) => ({
+      jumps: 0,
+      increaseJumps: () => set((state) => ({ jumps: state.jumps + 1 }))
     }),
-  removeCube: (x, y, z) =>
-    set((state) =>
-      state.cubes.filter((cube) => cube.x !== x || cube.y !== y || cube.z !== z)
-    ),
-  texture: "wood",
-  setTexture: (texture) => set((state) => ({ texture })),
-  saveWorld: () => set((state) => setLocalStorage("world", state.cubes)),
-}));
+    {
+      name: 'game'
+    }
+  )
+)

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 
+import { useStore } from '../hooks/useStore'
+
 function moveByKey(key) {
   switch (key) {
     case 'ArrowUp':
@@ -22,6 +24,11 @@ function moveByKey(key) {
 }
 
 export const useController = () => {
+  const [jumps, increaseJumps] = useStore((state) => [
+    state.jumps,
+    state.increaseJumps
+  ])
+
   const [movement, setMovement] = useState({
     forward: false,
     backward: false,
@@ -33,11 +40,15 @@ export const useController = () => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       let code = moveByKey(e.code)
-      if (code)
+      if (code) {
+        if (code === 'jump') {
+          increaseJumps()
+        }
         setMovement((m) => ({
           ...m,
           [code]: true
         }))
+      }
     }
     const handleKeyUp = (e) => {
       let code = moveByKey(e.code)
