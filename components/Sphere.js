@@ -5,21 +5,11 @@ import { useController } from '../hooks/useController'
 import { Vector3 } from 'three'
 import { useStore } from '../hooks/useStore'
 
-import { gql, useMutation } from '@apollo/client'
-
-const QUERY = gql`
-  mutation MyQuery {
-    user {
-      uid
-      pos
-    }
-  }
-`
-
 const SPEED = 16
 
 export default function Sphere(props) {
   const uid = useStore((state) => state.uid)
+  const setPos = useStore((state) => state.setPos)
   const { camera } = useThree()
   const { forward, backward, left, right, jump } = useController()
   const [ref, api] = useSphere(() => ({
@@ -28,16 +18,29 @@ export default function Sphere(props) {
     ...props
   }))
   const velocity = useRef([0, 0, 0])
-  const lookAt = new Vector3()
+  const pos = new Vector3()
 
   useEffect(() => {
     api.velocity.subscribe((v) => (velocity.current = v))
   }, [api.velocity])
 
+  let startTime = new Date()
+  let elapsedTime
+
   useFrame(() => {
     if (props.uid !== uid) return
     // copy sphere position to lookAt vector
-    ref.current.getWorldPosition(lookAt)
+    ref.current.getWorldPosition(pos)
+
+    elapsedTime = new Date()
+
+    //setPos([0, 0, 0])
+    // If 200 ms have passed, update position
+    if (elapsedTime - startTime > 10) {
+      // console.log(pos)
+      setPos([pos.x, pos.y, pos.z])
+      startTime = new Date()
+    }
 
     const direction = new Vector3()
 
@@ -52,7 +55,7 @@ export default function Sphere(props) {
 
     api.velocity.set(direction.x, velocity.current[1], direction.z)
 
-    camera.position.set(lookAt.x, 10, lookAt.z - 10)
+    camera.position.set(pos.x, 10, pos.z - 10)
 
     if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
       api.velocity.set(velocity.current[0], 20, velocity.current[2])

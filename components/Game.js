@@ -1,11 +1,19 @@
 import { Canvas } from '@react-three/fiber'
-import { Sky, PointerLockControls, PerspectiveCamera } from '@react-three/drei'
+import { Sky, PerspectiveCamera } from '@react-three/drei'
 import { Physics } from '@react-three/cannon'
 import { Ground, Sphere, Cube } from '../components/'
 import { useStore } from '../hooks/useStore'
 
-import { gql, useSubscription } from '@apollo/client'
+import { gql, useSubscription, useMutation } from '@apollo/client'
 import { useEffect } from 'react'
+
+const MOVE_POS = gql`
+  mutation Move($uid: String!, $pos: jsonb!) {
+    update_user(where: { uid: { _eq: $uid } }, _set: { pos: $pos }) {
+      affected_rows
+    }
+  }
+`
 
 const SUBSCRIPTION = gql`
   subscription {
@@ -18,9 +26,16 @@ const SUBSCRIPTION = gql`
 
 export default function Game() {
   const jumps = useStore((state) => state.jumps)
+  const pos = useStore((state) => state.pos)
+  const uid = useStore((state) => state.uid)
+  const [move, { data: data2, loading: loading2, error: error2 }] =
+    useMutation(MOVE_POS)
 
   const { data, loading, error } = useSubscription(SUBSCRIPTION)
 
+  useEffect(() => {
+    move({ variables: { uid, pos } })
+  }, [pos])
   if (error) {
     console.log(error)
     return <h2>Error!</h2>
