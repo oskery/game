@@ -7,24 +7,28 @@ const httpLink = new HttpLink({
   uri: 'https://game-one.herokuapp.com/v1/graphql'
 })
 
-const wsLink = new WebSocketLink({
-  uri: 'ws://game-one.herokuapp.com/v1/graphql',
-  options: {
-    reconnect: true
-  }
-})
+const wsLink = process.browser
+  ? new WebSocketLink({
+      uri: 'ws://game-one.herokuapp.com/v1/graphql',
+      options: {
+        reconnect: true
+      }
+    })
+  : null
 
-const splitLink = split(
-  ({ query }) => {
-    const definition = getMainDefinition(query)
-    return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
+const splitLink = process.browser
+  ? split(
+      ({ query }) => {
+        const definition = getMainDefinition(query)
+        return (
+          definition.kind === 'OperationDefinition' &&
+          definition.operation === 'subscription'
+        )
+      },
+      wsLink,
+      httpLink
     )
-  },
-  wsLink,
-  httpLink
-)
+  : httpLink
 
 const client = new ApolloClient({
   link: splitLink,
