@@ -3,15 +3,10 @@ import { useSphere } from '@react-three/cannon'
 import { useThree, useFrame } from '@react-three/fiber'
 import { useController } from '../hooks/useController'
 import { Vector3 } from 'three'
-import {
-  PointerLockControls,
-  PerspectiveCamera,
-  OrthographicCamera
-} from '@react-three/drei'
 
 const SPEED = 16
 
-export default function Player(props) {
+export default function Sphere(props) {
   const { camera } = useThree()
   const { forward, backward, left, right, jump } = useController()
   const [ref, api] = useSphere(() => ({
@@ -42,8 +37,7 @@ export default function Player(props) {
 
     api.velocity.set(direction.x, velocity.current[1], direction.z)
 
-    //console.log(lookAt)
-    camera.position.set(lookAt.x, 0, lookAt.z)
+    //camera.position.set(lookAt.x, 10, lookAt.z - 10)
 
     if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
       api.velocity.set(velocity.current[0], 20, velocity.current[2])
@@ -51,10 +45,7 @@ export default function Player(props) {
 
   return (
     <>
-      <PointerLockControls />
-
       <mesh castShadow ref={ref}>
-        <PerspectiveCamera makeDefault fov={75} />
         <meshStandardMaterial />
         <sphereBufferGeometry attach="geometry" />
       </mesh>
