@@ -1,5 +1,5 @@
-import Player from './Player'
+import Sphere from './Sphere'
 import Ground from './Ground'
 import Cube from './Cube'
 
-export { Player, Ground, Cube }
+export { Sphere, Ground, Cube }

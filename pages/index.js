@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber'
 import { Sky, PointerLockControls } from '@react-three/drei'
 import { Physics } from '@react-three/cannon'
-import { Ground, Player, Cube } from '../components/'
+import { Ground, Sphere, Cube } from '../components/'
 import { useStore } from '../hooks/useStore'
 
 export default function Game() {
@@ -16,7 +16,7 @@ export default function Game() {
         <Physics gravity={[0, -106, 0]}>
           {false && <Cube position={[0, 1, -10]} />}
           <Ground />
-          <Player />
+          <Sphere />
         </Physics>
         <PointerLockControls />
       </Canvas>
