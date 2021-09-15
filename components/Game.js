@@ -44,7 +44,7 @@ export default function Game() {
           <Ground />
           {!loading &&
             data.user.map(({ uid, pos }) => (
-              <Sphere key={uid} position={pos} />
+              <Sphere key={uid} position={pos} uid={uid} />
             ))}
         </Physics>
       </Canvas>

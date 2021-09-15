@@ -3,10 +3,23 @@ import { useSphere } from '@react-three/cannon'
 import { useThree, useFrame } from '@react-three/fiber'
 import { useController } from '../hooks/useController'
 import { Vector3 } from 'three'
+import { useStore } from '../hooks/useStore'
+
+import { gql, useSubscription } from '@apollo/client'
+
+const QUERY = gql`
+  mutation MyQuery {
+    user {
+      uid
+      pos
+    }
+  }
+`
 
 const SPEED = 16
 
 export default function Sphere(props) {
+  const uid = useStore((state) => state.uid)
   const { camera } = useThree()
   const { forward, backward, left, right, jump } = useController()
   const [ref, api] = useSphere(() => ({
@@ -22,6 +35,7 @@ export default function Sphere(props) {
   }, [api.velocity])
 
   useFrame(() => {
+    if (props.uid !== uid) return
     // copy sphere position to lookAt vector
     ref.current.getWorldPosition(lookAt)
 
@@ -38,7 +52,7 @@ export default function Sphere(props) {
 
     api.velocity.set(direction.x, velocity.current[1], direction.z)
 
-    //camera.position.set(lookAt.x, 10, lookAt.z - 10)
+    camera.position.set(lookAt.x, 10, lookAt.z - 10)
 
     if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
       api.velocity.set(velocity.current[0], 20, velocity.current[2])
