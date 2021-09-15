@@ -22,6 +22,7 @@ export default function Sphere(props) {
   }, [api.velocity])
 
   useFrame(() => {
+    // copy sphere position to lookAt vector
     ref.current.getWorldPosition(lookAt)
 
     const direction = new Vector3()

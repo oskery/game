@@ -35,7 +35,9 @@ export default function Game({ user }) {
         <Physics gravity={[0, -106, 0]}>
           {false && <Cube position={[0, 1, -10]} />}
           <Ground />
-          <Sphere />
+          {user.map(({ id, pos }) => (
+            <Sphere key={id} position={pos} />
+          ))}
         </Physics>
         <PointerLockControls />
       </Canvas>
